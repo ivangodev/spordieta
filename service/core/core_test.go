@@ -3,12 +3,12 @@ package core
 import (
 	"github.com/ivangodev/spordieta/entity"
 	"testing"
-	"time"
+	//"time"
 )
 
 func testCreate(t *testing.T, s *Core, durationSec int) (entity.UserId, entity.BetId) {
 	//Create user
-	userId := entity.UserId("TelegramId:42493039")
+	userId := entity.UserId("telegramid42493039")
 	err := s.CreateUser(userId)
 	if err != nil {
 		t.Fatalf("Failed to create user: %s", err)
@@ -61,7 +61,7 @@ func testCreate(t *testing.T, s *Core, durationSec int) (entity.UserId, entity.B
 	return userId, betId
 }
 
-func testPay(t *testing.T, s *Core, c *mockStorageConnect, userId entity.UserId, betId entity.BetId) {
+func testPay(t *testing.T, s *Core, c *storageConnect, userId entity.UserId, betId entity.BetId) {
 	info, err := s.GetBetInfo(userId, betId)
 	if err != nil {
 		t.Fatalf("Failed to get bet info: %s", err)
@@ -71,7 +71,7 @@ func testPay(t *testing.T, s *Core, c *mockStorageConnect, userId entity.UserId,
 	}
 
 	//User uploaded pay
-	c.uploadPayProof(userId, betId)
+	c.uploadPayProof(userId, betId, "bad pay")
 	info, err = s.GetBetInfo(userId, betId)
 	if err != nil {
 		t.Fatalf("Failed to get bet info: %s", err)
@@ -99,7 +99,7 @@ func testPay(t *testing.T, s *Core, c *mockStorageConnect, userId entity.UserId,
 	}
 
 	//User reuploaded pay
-	c.uploadPayProof(userId, betId)
+	c.uploadPayProof(userId, betId, "good pay")
 
 	//Admin liked it
 	status.Opened = false
@@ -116,7 +116,7 @@ func testPay(t *testing.T, s *Core, c *mockStorageConnect, userId entity.UserId,
 	}
 }
 
-func testBadWinProof(t *testing.T, s *Core, c *mockStorageConnect, userId entity.UserId, betId entity.BetId) {
+func testBadWinProof(t *testing.T, s *Core, c *storageConnect, userId entity.UserId, betId entity.BetId) {
 	info, err := s.GetBetInfo(userId, betId)
 	if err != nil {
 		t.Fatalf("Failed to get bet info: %s", err)
@@ -126,7 +126,7 @@ func testBadWinProof(t *testing.T, s *Core, c *mockStorageConnect, userId entity
 	}
 
 	//User uploaded pay
-	c.uploadWinProof(userId, betId)
+	c.uploadWinProof(userId, betId, "bad proof")
 	info, err = s.GetBetInfo(userId, betId)
 	if err != nil {
 		t.Fatalf("Failed to get bet info: %s", err)
@@ -155,20 +155,25 @@ func testBadWinProof(t *testing.T, s *Core, c *mockStorageConnect, userId entity
 	}
 }
 
-func TestTimeoutExpries(t *testing.T) {
-	r := newMockRepo()
-	c := newMockStorageConnect()
-	s := newCoreService(r, c)
-	u, b := testCreate(t, s, 1)
-	time.Sleep(2 * time.Second)
-	testPay(t, s, c, u, b)
-}
-
 func TestBadWinProof(t *testing.T) {
+	storage := newMockStorage()
+	storage.start()
 	r := newMockRepo()
-	c := newMockStorageConnect()
+	c := newStrgConn("http://localhost:8080")
 	s := newCoreService(r, c)
 	u, b := testCreate(t, s, 1)
 	testBadWinProof(t, s, c, u, b)
 	testPay(t, s, c, u, b)
 }
+
+/* TODO:
+ * func TestTimeoutExpries(t *testing.T) {
+ *     r := newMockRepo()
+ *     c := newMockStorageConnect()
+ *     s := newCoreService(r, c)
+ *     u, b := testCreate(t, s, 1)
+ *     time.Sleep(2 * time.Second)
+ *     testPay(t, s, c, u, b)
+ * }
+ * 
+ */

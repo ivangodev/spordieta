@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"github.com/ivangodev/spordieta/entity"
+	"strconv"
 )
 
 type mockRepo struct {
@@ -50,7 +51,7 @@ func (s *mockRepo) CreateBet(id entity.UserId, info entity.BetInfo) (betId entit
 		return
 	}
 
-	betId = entity.BetId(s.betsCnt)
+	betId = entity.BetId(strconv.Itoa(s.betsCnt))
 	s.userBet[id] = betId
 	s.betInfo[betId] = info
 	s.betsCnt++

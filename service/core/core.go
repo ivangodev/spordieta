@@ -4,16 +4,16 @@ import (
 	"fmt"
 	"github.com/ivangodev/spordieta/entity"
 	"github.com/ivangodev/spordieta/repository"
-	"github.com/ivangodev/spordieta/service/storageconnect"
+	"log"
 	"time"
 )
 
 type Core struct {
 	repo     repository.RepositoryI
-	strgConn storageconnect.StorageConnectI
+	strgConn StorageConnectI
 }
 
-func newCoreService(repo repository.RepositoryI, strgConn storageconnect.StorageConnectI) *Core {
+func newCoreService(repo repository.RepositoryI, strgConn StorageConnectI) *Core {
 	return &Core{repo, strgConn}
 }
 
@@ -103,7 +103,9 @@ func (s *Core) PatchBetStatus(userId entity.UserId, betId entity.BetId, status e
 		return err
 	}
 	if !status.Opened || !status.Uploaded {
-		s.strgConn.DeleteProofs(userId, betId)
+		if s.strgConn.DeleteProofs(userId, betId) != err {
+			log.Printf("Failed to delete proofs (%v/%v): %s", userId, betId, err)
+		}
 	}
 	return nil
 }
