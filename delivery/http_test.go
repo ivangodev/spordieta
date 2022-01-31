@@ -168,6 +168,42 @@ func TestEndpoints(t *testing.T) {
 	t.Logf("Response status:\n%s\n", resp.Status)
 	t.Logf("Response body:\n%s\n\n\n", string(respBody))
 
+	method = "GET"
+	url = domainedStorage("/user/0/bet/0/winproof")
+	t.Logf("Method: %s\nURL: %s\n", method, url)
+	req, err = http.NewRequest(method, url, nil)
+	if err != nil {
+		t.Fatalf("Failed request: %s", err)
+	}
+	resp, err = client.Do(req)
+	if err != nil {
+		t.Fatalf("Failed request: %s", err)
+	}
+	respBody, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatalf("Failed request: %s", err)
+	}
+	t.Logf("Response status:\n%s\n", resp.Status)
+	t.Logf("Response body:\n%s\n\n\n", string(respBody))
+
+	method = "GET"
+	url = domainedStorage("/user/0/bet/0/winproof/data")
+	t.Logf("Method: %s\nURL: %s\n", method, url)
+	req, err = http.NewRequest(method, url, nil)
+	if err != nil {
+		t.Fatalf("Failed request: %s", err)
+	}
+	resp, err = client.Do(req)
+	if err != nil {
+		t.Fatalf("Failed request: %s", err)
+	}
+	respBody, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatalf("Failed request: %s", err)
+	}
+	t.Logf("Response status:\n%s\n", resp.Status)
+	t.Logf("Response body:\n%s\n\n\n", string(respBody))
+
 	method = "PATCH"
 	url = domainedCore("/user/0/bet/0")
 	body = bytes.NewBuffer([]byte(`

@@ -158,12 +158,12 @@ func testBadWinProof(t *testing.T, s *Core, c *storageConnect, userId entity.Use
 
 func TestBadWinProof(t *testing.T) {
 	router := mux.NewRouter()
-	storage := newMockStorage(router)
-	storage.registerEndpoints()
+	storage := NewMockStorage(router)
+	storage.RegisterEndpoints()
 	go http.ListenAndServe(":8080", router)
 
-	r := newMockRepo()
-	c := newStrgConn("http://localhost:8080")
+	r := NewMockRepo()
+	c := NewStrgConn("http://localhost:8080")
 	s := NewCoreService(r, c)
 	u, b := testCreate(t, s, 1)
 	testBadWinProof(t, s, c, u, b)
