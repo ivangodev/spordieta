@@ -9,6 +9,7 @@ import (
 )
 
 type mockStorage struct {
+	router    *mux.Router
 	winProofs map[entity.UserBet]string
 	payProofs map[entity.UserBet]string
 }
@@ -19,8 +20,9 @@ type reqInfo struct {
 	proofKind string
 }
 
-func newMockStorage() *mockStorage {
+func NewMockStorage(router *mux.Router) *mockStorage {
 	return &mockStorage{
+		router,
 		map[entity.UserBet]string{},
 		map[entity.UserBet]string{},
 	}
@@ -67,9 +69,8 @@ func getReqInfo(w http.ResponseWriter, r *http.Request) (reqInfo, error) {
 	return reqInfo{userId: userId, betId: betId, proofKind: proofKind}, nil
 }
 
-func (c *mockStorage) start() {
-	r := mux.NewRouter()
-	r.HandleFunc("/user/{user_id}/bet/{bet_id}/{proof_kind}",
+func (c *mockStorage) RegisterEndpoints() {
+	c.router.HandleFunc("/user/{user_id}/bet/{bet_id}/{proof_kind}",
 		func(w http.ResponseWriter, r *http.Request) {
 			info, err := getReqInfo(w, r)
 			if err != nil {
@@ -94,7 +95,7 @@ func (c *mockStorage) start() {
 			}
 		})
 
-	r.HandleFunc("/user/{user_id}/bet/{bet_id}/{proof_kind}/data",
+	c.router.HandleFunc("/user/{user_id}/bet/{bet_id}/{proof_kind}/data",
 		func(w http.ResponseWriter, r *http.Request) {
 			info, err := getReqInfo(w, r)
 			if err != nil {
@@ -112,6 +113,5 @@ func (c *mockStorage) start() {
 			}
 		})
 
-	http.Handle("/", r)
-	go http.ListenAndServe(":8080", r)
+	http.Handle("/", c.router)
 }

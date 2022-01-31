@@ -13,7 +13,7 @@ type mockRepo struct {
 	betInfo map[entity.BetId]entity.BetInfo
 }
 
-func newMockRepo() *mockRepo {
+func NewMockRepo() *mockRepo {
 	return &mockRepo{
 		users:   map[entity.UserId]struct{}{},
 		userBet: map[entity.UserId]entity.BetId{},

@@ -8,11 +8,11 @@ type UserId string
 type BetId string
 
 type BetCond struct {
-	CurrWeight  float64
-	GoalWeight  float64
-	Money       int
-	DurationSec int       //User sends this
-	Deadline    time.Time //Repo saves actual deadline
+	CurrWeight  float64   `json:"currWeight"`
+	GoalWeight  float64   `json:"goalWeight"`
+	Money       int       `json:"money"`
+	DurationSec int       `json:"durationSec"` //User sends this
+	Deadline    time.Time `json:"deadline"`    //Repo saves actual deadline
 }
 
 const (
@@ -21,11 +21,11 @@ const (
 )
 
 type BetStatus struct {
-	Opened       bool
-	State        int
-	Uploaded     bool
-	AdminComment string
-	AdminManaged bool
+	Opened       bool   `json:"opened"`
+	State        int    `json:"state"`
+	Uploaded     bool   `json:"uploaded"`
+	AdminComment string `json:"adminComment"`
+	AdminManaged bool   `json:"-"`
 }
 
 type BetInfo struct {

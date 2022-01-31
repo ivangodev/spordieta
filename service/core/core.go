@@ -13,7 +13,7 @@ type Core struct {
 	strgConn StorageConnectI
 }
 
-func newCoreService(repo repository.RepositoryI, strgConn StorageConnectI) *Core {
+func NewCoreService(repo repository.RepositoryI, strgConn StorageConnectI) *Core {
 	return &Core{repo, strgConn}
 }
 

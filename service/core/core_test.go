@@ -1,9 +1,10 @@
 package core
 
 import (
+	"github.com/gorilla/mux"
 	"github.com/ivangodev/spordieta/entity"
+	"net/http"
 	"testing"
-	//"time"
 )
 
 func testCreate(t *testing.T, s *Core, durationSec int) (entity.UserId, entity.BetId) {
@@ -156,11 +157,14 @@ func testBadWinProof(t *testing.T, s *Core, c *storageConnect, userId entity.Use
 }
 
 func TestBadWinProof(t *testing.T) {
-	storage := newMockStorage()
-	storage.start()
+	router := mux.NewRouter()
+	storage := newMockStorage(router)
+	storage.registerEndpoints()
+	go http.ListenAndServe(":8080", router)
+
 	r := newMockRepo()
 	c := newStrgConn("http://localhost:8080")
-	s := newCoreService(r, c)
+	s := NewCoreService(r, c)
 	u, b := testCreate(t, s, 1)
 	testBadWinProof(t, s, c, u, b)
 	testPay(t, s, c, u, b)
@@ -175,5 +179,5 @@ func TestBadWinProof(t *testing.T) {
  *     time.Sleep(2 * time.Second)
  *     testPay(t, s, c, u, b)
  * }
- * 
+ *
  */

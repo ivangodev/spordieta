@@ -12,7 +12,7 @@ type storageConnect struct {
 	domain string
 }
 
-func newStrgConn(domain string) *storageConnect {
+func NewStrgConn(domain string) *storageConnect {
 	return &storageConnect{domain}
 }
 
