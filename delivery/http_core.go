@@ -9,13 +9,13 @@ import (
 	"net/http"
 )
 
-type HttpDeliv struct {
+type HttpCore struct {
 	router  *mux.Router
 	service *core.Core
 }
 
-func NewHttpDeliv(router *mux.Router, serv *core.Core) *HttpDeliv {
-	return &HttpDeliv{router, serv}
+func NewHttpCore(router *mux.Router, serv *core.Core) *HttpCore {
+	return &HttpCore{router, serv}
 }
 
 func writeJson(w http.ResponseWriter, js []byte) {
@@ -32,16 +32,16 @@ func writeError(w http.ResponseWriter, e error) {
 	writeJson(w, errToJson(e))
 }
 
-func (d *HttpDeliv) createUser(w http.ResponseWriter, r *http.Request) {
+func (d *HttpCore) createUser(w http.ResponseWriter, r *http.Request) {
 	userId := entity.UserId(mux.Vars(r)["user_id"])
 	err := d.service.CreateUser(userId)
 	if err != nil {
-		writeError(w, err)
+		writeError(w, fmt.Errorf("Failed to create user: %w", err))
 		return
 	}
 }
 
-func (d *HttpDeliv) createBet(w http.ResponseWriter, r *http.Request) {
+func (d *HttpCore) createBet(w http.ResponseWriter, r *http.Request) {
 	userId := entity.UserId(mux.Vars(r)["user_id"])
 
 	dec := json.NewDecoder(r.Body)
@@ -62,7 +62,7 @@ func (d *HttpDeliv) createBet(w http.ResponseWriter, r *http.Request) {
 	writeJson(w, []byte([]byte(`{"bet_id": "`+betId+`"}`)))
 }
 
-func (d *HttpDeliv) getOpenedBet(w http.ResponseWriter, r *http.Request) {
+func (d *HttpCore) getOpenedBet(w http.ResponseWriter, r *http.Request) {
 	userId := entity.UserId(mux.Vars(r)["user_id"])
 	betId, err := d.service.GetOpenedBet(userId)
 	if err != nil {
@@ -77,7 +77,7 @@ func (d *HttpDeliv) getOpenedBet(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (d *HttpDeliv) getBetInfo(w http.ResponseWriter, r *http.Request) {
+func (d *HttpCore) getBetInfo(w http.ResponseWriter, r *http.Request) {
 	userId := entity.UserId(mux.Vars(r)["user_id"])
 	betId := entity.BetId(mux.Vars(r)["bet_id"])
 	info, err := d.service.GetBetInfo(userId, betId)
@@ -94,7 +94,7 @@ func (d *HttpDeliv) getBetInfo(w http.ResponseWriter, r *http.Request) {
 	writeJson(w, resp)
 }
 
-func (d *HttpDeliv) patchBetStatus(w http.ResponseWriter, r *http.Request) {
+func (d *HttpCore) patchBetStatus(w http.ResponseWriter, r *http.Request) {
 	userId := entity.UserId(mux.Vars(r)["user_id"])
 	betId := entity.BetId(mux.Vars(r)["bet_id"])
 
@@ -114,7 +114,7 @@ func (d *HttpDeliv) patchBetStatus(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (d *HttpDeliv) getBetToReview(w http.ResponseWriter, r *http.Request) {
+func (d *HttpCore) getBetToReview(w http.ResponseWriter, r *http.Request) {
 	bets, err := d.service.GetBetsToReview()
 	if err != nil {
 		writeError(w, err)
@@ -140,7 +140,7 @@ func (d *HttpDeliv) getBetToReview(w http.ResponseWriter, r *http.Request) {
 	writeJson(w, []byte("["+resp+"]"))
 }
 
-func (d *HttpDeliv) RegisterEndpoints() {
+func (d *HttpCore) RegisterEndpoints() {
 	d.router.HandleFunc("/user/{user_id}",
 		func(w http.ResponseWriter, r *http.Request) {
 			d.createUser(w, r)

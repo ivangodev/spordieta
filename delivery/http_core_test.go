@@ -37,7 +37,7 @@ func startEndpoints() {
 	r := core.NewMockRepo()
 	c := core.NewStrgConn(domainedStorage(""))
 	s := core.NewCoreService(r, c)
-	d := NewHttpDeliv(routerCore, s)
+	d := NewHttpCore(routerCore, s)
 	d.RegisterEndpoints()
 	go func() {
 		err := http.ListenAndServe(corePort, routerCore)

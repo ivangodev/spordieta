@@ -60,7 +60,7 @@ func (s *Core) GetBetInfo(userId entity.UserId, betId entity.BetId) (info entity
 		return
 	}
 
-	st := info.Status
+	st := &info.Status
 	if !st.Opened {
 		return
 	}

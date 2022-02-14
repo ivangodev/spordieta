@@ -1,9 +1,11 @@
 ## HOWTO 
 
-Install go compiler and start Core and Storage microservices:
+Start Core and Storage microservices via docker-compose:
 
 ```
-$ go run ./cmd
+$ docker-compose up --build
+...
+$ docker-compose down --volume
 ```
 
 Example of API usage:
