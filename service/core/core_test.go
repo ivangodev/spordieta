@@ -59,6 +59,10 @@ func testCreate(t *testing.T, s *Core, durationSec int) (entity.UserId, entity.B
 		t.Fatalf("Unexpected bet status: want %v VS actual %v", want, info.Status)
 	}
 
+	if info.Cond.LeftSec != (durationSec - 1) {
+		t.Fatalf("Unexpected left seconds time: %v", info.Cond.LeftSec)
+	}
+
 	return userId, betId
 }
 
@@ -165,7 +169,7 @@ func TestBadWinProof(t *testing.T) {
 	r := NewMockRepo()
 	c := NewStrgConn("http://localhost:8080")
 	s := NewCoreService(r, c)
-	u, b := testCreate(t, s, 1)
+	u, b := testCreate(t, s, 2)
 	testBadWinProof(t, s, c, u, b)
 	testPay(t, s, c, u, b)
 }

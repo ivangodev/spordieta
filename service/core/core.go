@@ -60,6 +60,8 @@ func (s *Core) GetBetInfo(userId entity.UserId, betId entity.BetId) (info entity
 		return
 	}
 
+	info.Cond.LeftSec = int(info.Cond.Deadline.Sub(time.Now()).Seconds())
+
 	st := &info.Status
 	if !st.Opened {
 		return

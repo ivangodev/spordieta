@@ -12,7 +12,8 @@ type BetCond struct {
 	GoalWeight  float64   `json:"goalWeight"`
 	Money       int       `json:"money"`
 	DurationSec int       `json:"durationSec"` //User sends this
-	Deadline    time.Time `json:"deadline"`    //Repo saves actual deadline
+	Deadline    time.Time `json:"-"`           //Repo saves actual deadline
+	LeftSec     int       `json:"leftSec"`     //Service returns this
 }
 
 const (
